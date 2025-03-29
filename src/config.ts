@@ -22,7 +22,7 @@ export const config = {
   },
   token_buy: {
     provider: "sniperoo",
-    sol_amount: 0.1, // Amount of SOL to spend
+    sol_amount: 0.01, // Amount of SOL to spend
     play_sound: true, // Works only on windows
     play_sound_text: "Order Filled!",
   },
@@ -55,7 +55,7 @@ export const config = {
       min_total_markets: 999,
       min_total_market_Liquidity: 5000,
       // Misc
-      ignore_ends_with_pump: true,
+      ignore_ends_with_pump: false,
       max_score: 1, // Set to 0 to ignore
     },
   },

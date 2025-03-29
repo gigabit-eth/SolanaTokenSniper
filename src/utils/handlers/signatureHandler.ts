@@ -13,7 +13,8 @@ export class SignatureHandler {
 
   constructor(connection?: Connection) {
     const env = validateEnv();
-    this.connection = connection || new Connection(env.HELIUS_HTTPS_URI, "confirmed");
+    this.connection =
+      connection || new Connection(env.HELIUS_HTTPS_URI, "confirmed");
   }
 
   /**
@@ -22,7 +23,11 @@ export class SignatureHandler {
    * @returns Promise resolving to mint address or null
    */
   public async getMintFromSignature(signature: string): Promise<string | null> {
-    if (!signature || typeof signature !== "string" || signature.trim() === "") {
+    if (
+      !signature ||
+      typeof signature !== "string" ||
+      signature.trim() === ""
+    ) {
       return null; // Invalid signature, return null immediately
     }
 
@@ -47,7 +52,8 @@ export class SignatureHandler {
       }
 
       // Get token balances - prefer postTokenBalances as they're more likely to contain the new token
-      const tokenBalances = tx.meta.postTokenBalances || tx.meta.preTokenBalances;
+      const tokenBalances =
+        tx.meta.postTokenBalances || tx.meta.preTokenBalances;
       if (!tokenBalances?.length) return null;
 
       // Fast path: If we have exactly 2 token balances, one is likely WSOL and the other is the token
@@ -78,7 +84,7 @@ export class SignatureHandler {
 
       // If we only found WSOL mints, return null
       return null;
-    } catch (error) {
+    } catch {
       // Minimal error logging for speed
       return null;
     }
@@ -93,6 +99,8 @@ const signatureHandler = new SignatureHandler();
  * @param signature Transaction signature
  * @returns Mint address or null
  */
-export async function getMintFromSignature(signature: string): Promise<string | null> {
+export async function getMintFromSignature(
+  signature: string
+): Promise<string | null> {
   return signatureHandler.getMintFromSignature(signature);
 }

@@ -7,12 +7,22 @@ import { validateEnv } from "../env-validator";
  * @param inputAmount Amount of SOL to spend
  * @returns Boolean indicating if the purchase was successful
  */
-export async function buyToken(tokenAddress: string, inputAmount: number, sell: boolean, tp: number, sl: number): Promise<boolean> {
+export async function buyToken(
+  tokenAddress: string,
+  inputAmount: number,
+  sell: boolean,
+  tp: number,
+  sl: number
+): Promise<boolean> {
   try {
     const env = validateEnv();
 
     // Validate inputs
-    if (!tokenAddress || typeof tokenAddress !== "string" || tokenAddress.trim() === "") {
+    if (
+      !tokenAddress ||
+      typeof tokenAddress !== "string" ||
+      tokenAddress.trim() === ""
+    ) {
       return false;
     }
 
@@ -40,12 +50,16 @@ export async function buyToken(tokenAddress: string, inputAmount: number, sell: 
     };
 
     // Make API request using axios
-    const response = await axios.post("https://api.sniperoo.app/trading/buy-token?toastFrontendId=0", requestBody, {
-      headers: {
-        Authorization: `Bearer ${env.SNIPEROO_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-    });
+    await axios.post(
+      "https://api.sniperoo.app/trading/buy-token?toastFrontendId=0",
+      requestBody,
+      {
+        headers: {
+          Authorization: `Bearer ${env.SNIPEROO_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     // Axios automatically throws an error for non-2xx responses,
     // so if we get here, the request was successful
@@ -53,9 +67,15 @@ export async function buyToken(tokenAddress: string, inputAmount: number, sell: 
   } catch (error) {
     // Handle axios errors
     if (axios.isAxiosError(error)) {
-      console.error(`Sniperoo API error (${error.response?.status || "unknown"}):`, error.response?.data || error.message);
+      console.error(
+        `Sniperoo API error (${error.response?.status || "unknown"}):`,
+        error.response?.data || error.message
+      );
     } else {
-      console.error("Error buying token:", error instanceof Error ? error.message : "Unknown error");
+      console.error(
+        "Error buying token:",
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
     return false;
   }

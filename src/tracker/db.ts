@@ -1,10 +1,12 @@
 import * as sqlite3 from "sqlite3";
-import { open } from "sqlite";
+import { open, Database } from "sqlite";
 import { config } from "./../config";
 import { NewTokenRecord } from "../types";
 
 // New token duplicates tracker
-export async function createTableNewTokens(database: any): Promise<boolean> {
+export async function createTableNewTokens(
+  database: Database
+): Promise<boolean> {
   try {
     await database.exec(`
     CREATE TABLE IF NOT EXISTS tokens (
@@ -16,7 +18,8 @@ export async function createTableNewTokens(database: any): Promise<boolean> {
     );
   `);
     return true;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    console.error("Error creating table:", error);
     return false;
   }
 }
@@ -49,7 +52,10 @@ export async function insertNewToken(newToken: NewTokenRecord) {
   }
 }
 
-export async function selectTokenByNameAndCreator(name: string, creator: string): Promise<NewTokenRecord[]> {
+export async function selectTokenByNameAndCreator(
+  name: string,
+  creator: string
+): Promise<NewTokenRecord[]> {
   // Open the database
   const db = await open({
     filename: config.db.pathname,
@@ -80,7 +86,9 @@ export async function selectTokenByNameAndCreator(name: string, creator: string)
   return tokens;
 }
 
-export async function selectTokenByMint(mint: string): Promise<NewTokenRecord[]> {
+export async function selectTokenByMint(
+  mint: string
+): Promise<NewTokenRecord[]> {
   // Open the database
   const db = await open({
     filename: config.db.pathname,

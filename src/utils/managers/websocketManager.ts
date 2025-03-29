@@ -51,7 +51,10 @@ export class WebSocketManager extends EventEmitter {
 
   // Connect to WebSocket server
   public connect(): void {
-    if (this.state === ConnectionState.CONNECTING || this.state === ConnectionState.CONNECTED) {
+    if (
+      this.state === ConnectionState.CONNECTING ||
+      this.state === ConnectionState.CONNECTED
+    ) {
       this.log("Already connected or connecting");
       return;
     }
@@ -63,7 +66,11 @@ export class WebSocketManager extends EventEmitter {
       this.ws = new WebSocket(this.url);
       this.setupEventListeners();
     } catch (error) {
-      this.handleError(error instanceof Error ? error : new Error("Unknown error during connection"));
+      this.handleError(
+        error instanceof Error
+          ? error
+          : new Error("Unknown error during connection")
+      );
     }
   }
 
@@ -79,7 +86,9 @@ export class WebSocketManager extends EventEmitter {
       this.ws.send(message);
       return true;
     } catch (error) {
-      this.handleError(error instanceof Error ? error : new Error("Error sending message"));
+      this.handleError(
+        error instanceof Error ? error : new Error("Error sending message")
+      );
       return false;
     }
   }
@@ -134,7 +143,10 @@ export class WebSocketManager extends EventEmitter {
   // Attempt to reconnect with exponential backoff
   private attemptReconnect(): void {
     if (this.retryCount >= this.maxRetries) {
-      this.log(`Maximum retry attempts (${this.maxRetries}) reached. Giving up.`, "error");
+      this.log(
+        `Maximum retry attempts (${this.maxRetries}) reached. Giving up.`,
+        "error"
+      );
       this.setState(ConnectionState.DISCONNECTED);
       this.emit("max_retries_reached");
       return;
@@ -147,7 +159,11 @@ export class WebSocketManager extends EventEmitter {
     const jitter = Math.random() * 0.3 + 0.85; // Random between 0.85 and 1.15
     const delay = Math.min(this.backoffTime * jitter, this.maxBackoff);
 
-    this.log(`Attempting to reconnect in ${Math.round(delay)}ms (attempt ${this.retryCount})`);
+    this.log(
+      `Attempting to reconnect in ${Math.round(delay)}ms (attempt ${
+        this.retryCount
+      })`
+    );
 
     this.reconnectTimer = setTimeout(() => {
       this.connect();
@@ -168,10 +184,13 @@ export class WebSocketManager extends EventEmitter {
       this.ws.removeAllListeners();
 
       // Close the connection if it's still open
-      if (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING) {
+      if (
+        this.ws.readyState === WebSocket.OPEN ||
+        this.ws.readyState === WebSocket.CONNECTING
+      ) {
         try {
           this.ws.close();
-        } catch (e) {
+        } catch {
           // Ignore errors during close
         }
       }
